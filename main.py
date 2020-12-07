@@ -1,4 +1,4 @@
-import logic.export_csv
+import logic.export_excel
 
-csv = logic.export_csv.ExportCsv('test.json', 'test.csv')
-csv.exportAsCsv()
+csv = logic.export_excel.ExportExcel('test.json')
+csv.exportAsExcel()
