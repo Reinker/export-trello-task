@@ -4,17 +4,25 @@ from openpyxl.utils import column_index_from_string
 from openpyxl.styles import PatternFill
 import json
 import csv
+import os
 
 class ExportExcel:
-    __tags = []
-
     def __init__(self, json_file):
         self.__json_file = json_file
-        self.__tags = ['ID', 'タスク', 'タスク内容', '更新日', 'ステータス', '担当者']
+        self.__contents = {}
+        self.__tags = ['ID', 'タスク名', 'タスク説明', '更新日', 'ステータス', '担当者']
         self.__wb = Workbook()
         self.__ws = self.__wb.active
         self.__ws.title = 'タスク一覧'
-        self.__fill = PatternFill(fill_type='solid', fgColor='00FF00')
+        self.__fill = PatternFill(fill_type='solid', fgColor='00FF00'), '担当者'
+
+    def __import_from_file(self):
+        files = os.listdir("./jsons")
+        for f in files:
+            file_open = open(f, 'r')
+            content = json.load(file_open)
+
+            self.__contents.append(content)
 
     def __readJson(self):
         file_open = open(self.__json_file, 'r')

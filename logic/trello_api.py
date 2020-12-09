@@ -1,7 +1,13 @@
 import model.card
+import model.board
 
 class TrelloAPI:
+    __cards = []
+
     def __init__(self, content):
+        self.__board = model.board.Board()
+        self.__board.set_name(content['name'])
+
         listname = {}
         for v in content['lists']:
             listname[v['id']] = v['name']
@@ -10,7 +16,6 @@ class TrelloAPI:
         for v in content['members']:
             members[v['id']] = v['fullName']
 
-        self.__cards = []
         for v in content['cards']:
             card = model.card.Card()
             card.set_card_id(v['id'])
@@ -28,6 +33,11 @@ class TrelloAPI:
             card.set_membernames(membernames)
 
             self.__cards.append(card)
+        
+        self.__board.set_cards(self.__cards)
 
     def get_cards(self):
         return self.__cards
+
+    def get_board(self):
+        return self.__board
