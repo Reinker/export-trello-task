@@ -2,6 +2,7 @@ class Card :
     __card_id = ''
     __name = ''
     __desc = ''
+    __date = ''
     __listname = ''
     __closed = False
     __membernames = []
@@ -36,6 +37,9 @@ class Card :
     def set_due_complete(self, due_complete):
         self.__due_complete = due_complete
 
+    def set_date(self, date):
+        self.__date = date
+
     def get_card_id(self):
         return self.__card_id
 
@@ -62,3 +66,6 @@ class Card :
 
     def get_due_complete(self):
         return self.__due_complete
+    
+    def get_date(self):
+        return self.__date
