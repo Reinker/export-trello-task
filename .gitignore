@@ -1,3 +1,7 @@
 *.json
 *.csv
-*/__pycache__/
+*.xlsx
+jsons/
+logic/__pycache__/
+model/__pycache__/
+
