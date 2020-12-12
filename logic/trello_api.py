@@ -8,7 +8,8 @@ def get_project_start_date(all_board_and_card):
 
     all_cards = []
     for key in all_board_and_card:
-        all_cards.append(all_board_and_card[key]) 
+        for card in all_board_and_card[key]:
+            all_cards.append(card) 
 
     all_cards.sort(key=lambda v : v.get_date())
     return all_cards[0].get_date()
@@ -63,4 +64,3 @@ class TrelloAPI:
 
     def sort_cards_by_date(self):
         self.__cards.sort(key=lambda v : v.get_date())
-

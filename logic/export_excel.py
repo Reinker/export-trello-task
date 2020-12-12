@@ -4,7 +4,7 @@ from openpyxl import Workbook
 from openpyxl.utils import column_index_from_string
 from openpyxl.styles import PatternFill, Border, Side
 import calendar
-import datetime
+from datetime import datetime
 import json
 import csv
 import os
@@ -35,6 +35,17 @@ class ExportExcel:
             board = api.get_board()
             api.sort_cards_by_date()
             self.__contents[board.get_name()] = board.get_cards()
+
+        self.__project_start_date = datetime.strptime(logic.trello_api.get_project_start_date(self.__contents), '%Y-%m-%dT%H:%M:%S.%f%z')
+        print(self.__project_start_date)
+        print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
+        try :
+            print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 1))
+            print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 2))
+        except calendar.IllegalMonthError:
+            print(calendar.monthcalendar(self.__project_start_date.year, calendar.January))
+            
+
 
     def __setTags(self):
         self.__ws.column_dimensions['A'].width = 20
