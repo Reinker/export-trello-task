@@ -1,7 +1,10 @@
 import logic.trello_api
+import model.card
 from openpyxl import Workbook
 from openpyxl.utils import column_index_from_string
 from openpyxl.styles import PatternFill, Border, Side
+import calendar
+import datetime
 import json
 import csv
 import os
@@ -32,6 +35,12 @@ class ExportExcel:
             api.sort_cards_by_date()
             self.__contents[board.get_name()] = board.get_cards()
 
+        all_card = []
+        for key in self.__contents:
+            all_card.append(self.__contents[key])
+
+        print(all_card)
+
     def __setTags(self):
         self.__ws.column_dimensions['A'].width = 20
         self.__ws.column_dimensions['B'].width = 30
@@ -46,11 +55,14 @@ class ExportExcel:
                 cell.value = self.__tags[cell.column - 1]
 
     def __set_performance(self):
+        if len(self.__contents) < 1:
+            return
+
         for key in self.__contents:
             for card in self.__contents[key]:
                 print(card.get_date())
 
-
+    #タグとフェーズの行を考慮してスタートを設定
     def exportAsExcel(self):
         if self.__contents == {}:
             return
@@ -61,7 +73,7 @@ class ExportExcel:
             cards = self.__contents[key]
             self.__ws.cell(row=offset, column=1).value = key
             self.__ws.merge_cells(start_row=offset, start_column=1, end_row=offset, end_column=len(self.__tags))
-            for row in range(offset + 1, len(cards) + 2):
+            for row in range(offset + 1, len(cards) + offset):
                 content = []
                 content.append(cards[row - 3].get_card_id())
                 content.append(cards[row - 3].get_name())
