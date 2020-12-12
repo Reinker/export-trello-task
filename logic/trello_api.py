@@ -1,6 +1,18 @@
 import model.card
 import model.board
 
+#プロジェクトのタスク開始日を取得する
+def get_project_start_date(all_board_and_card):
+    if len(all_board_and_card) < 1:
+        return
+
+    all_cards = []
+    for key in all_board_and_card:
+        all_cards.append(all_board_and_card[key]) 
+
+    all_cards.sort(key=lambda v : v.get_date())
+    return all_cards[0].get_date()
+
 class TrelloAPI:
     __cards = []
 
@@ -51,16 +63,4 @@ class TrelloAPI:
 
     def sort_cards_by_date(self):
         self.__cards.sort(key=lambda v : v.get_date())
-
-    #プロジェクトのタスク開始日を取得する
-    def get_project_start_date(self, all_board_and_card):
-        if len(board_and_card) < 1:
-            return
-
-        all_cards = []
-        for key in board_and_card:
-           all_cards.append(board_and_card[key]) 
-        
-        all_cards.sort(key=lambda v : v.get_date())
-        return all_cards[0].get_date()
 

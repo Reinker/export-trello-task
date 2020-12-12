@@ -20,6 +20,7 @@ class ExportExcel:
         self.__fill = PatternFill(fill_type='solid', fgColor='00FF00')
         side = Side(style='thin', color='000000')
         self.__border = Border(top=side,bottom=side,right=side,left=side)
+        self.__project_start_date = ''
 
     def import_from_files(self):
         files = os.listdir('./jsons')
@@ -34,12 +35,6 @@ class ExportExcel:
             board = api.get_board()
             api.sort_cards_by_date()
             self.__contents[board.get_name()] = board.get_cards()
-
-        all_card = []
-        for key in self.__contents:
-            all_card.append(self.__contents[key])
-
-        print(all_card)
 
     def __setTags(self):
         self.__ws.column_dimensions['A'].width = 20
