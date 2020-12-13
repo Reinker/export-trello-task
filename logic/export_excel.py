@@ -37,15 +37,34 @@ class ExportExcel:
             self.__contents[board.get_name()] = board.get_cards()
 
         self.__project_start_date = datetime.strptime(logic.trello_api.get_project_start_date(self.__contents), '%Y-%m-%dT%H:%M:%S.%f%z')
-        print(self.__project_start_date)
-        print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
-        try :
-            print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 1))
-            print(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 2))
-        except calendar.IllegalMonthError:
-            print(calendar.monthcalendar(self.__project_start_date.year, calendar.January))
-            
 
+        months = []
+        months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
+        try:
+            months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 1))
+        except calendar.IllegalMonthError:
+            months.append(calendar.monthcalendar(self.__project_start_date.year, calendar.January))
+
+        try:
+            months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 2))
+        except calendar.IllegalMonthError:
+            months.append(calendar.monthcalendar(self.__project_start_date.year, calendar.February))
+
+        # TODO: 月と週をハッシュマップで保持する
+        weeks = []
+        for month in months:
+            for week in month:
+                try:
+                    week.remove(0)
+                except ValueError:
+                    weeks.append(week[0])
+
+        offset = len(self.__tags)
+        for col in range(offset, len(weeks) + offset):
+            self.__ws.cell(row=2, column=col).value = weeks[col - offset]
+
+        # TODO: 週と月を対応させて表示
+        self.__ws.merge_cells(start_row=1, start_column=offset, end_row=1, end_column=len(weeks) + offset)
 
     def __setTags(self):
         self.__ws.column_dimensions['A'].width = 20
@@ -54,6 +73,7 @@ class ExportExcel:
         self.__ws.column_dimensions['D'].width = 30
         self.__ws.column_dimensions['E'].width = 25
         self.__ws.column_dimensions['F'].width = 25
+        self.__ws.column_dimensions['G'].width = 25
         for row in self.__ws.iter_rows(min_row=1, max_col=len(self.__tags), max_row=1):
             for cell in row:
                 cell.fill = self.__fill
@@ -90,5 +110,6 @@ class ExportExcel:
                 content.append(','.join(cards[row - 2].get_membernames()))
                 for col in range(2, len(self.__tags) + 1):
                     self.__ws.cell(row=row, column=col).value = content[col - 2]
+
             offset += len(cards)
         self.__wb.save('test.xlsx')
