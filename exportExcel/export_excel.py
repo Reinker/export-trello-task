@@ -12,7 +12,7 @@ import os
 class ExportExcel:
     def __init__(self, json_file):
         self.__json_file = json_file
-        self.__contents = {}
+        self.__boards = []
         self.__tags = ['フェーズ', 'ID', 'タスク名', 'タスク説明', '開始日', '更新日', 'ステータス', '担当者']
         self.__wb = Workbook()
         self.__ws = self.__wb.active
@@ -30,13 +30,12 @@ class ExportExcel:
         for f in files:
             print('load file : ' + f)
             file_open = open('./jsons/' + f, 'r')
-            content = json.load(file_open)
-            api = trello_api.TrelloAPI(content)
-            board = api.get_board()
+            json_str = json.load(file_open)
+            api = trello_api.TrelloAPI(json_str)
+            self.__boards.append(api.get_board())
             api.sort_cards_by_date()
-            self.__contents[board.get_name()] = board.get_cards()
 
-        self.__project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__contents), '%Y-%m-%dT%H:%M:%S.%f%z')
+        self.__project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__boards), '%Y-%m-%dT%H:%M:%S.%f%z')
 
         months = []
         months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
@@ -81,23 +80,23 @@ class ExportExcel:
                 cell.value = self.__tags[cell.column - 1]
 
     def __set_performance(self):
-        if len(self.__contents) < 1:
+        if len(self.__boards) < 1:
             return
 
-        for key in self.__contents:
-            for card in self.__contents[key]:
+        for board in self.__boards:
+            for card in board.get_cards():
                 print(card.get_date())
 
     #タグとフェーズの行を考慮してスタートを設定
     def exportAsExcel(self):
-        if self.__contents == {}:
+        if len(self.__boards) < 1:
             return
 
         self.__setTags()
         offset = 2
-        for key in self.__contents:
-            cards = self.__contents[key]
-            self.__ws.cell(row=offset, column=1).value = key
+        for board in self.__boards:
+            cards = board.get_cards()
+            self.__ws.cell(row=offset, column=1).value = board.get_name()
             self.__ws.merge_cells(start_row=offset, start_column=1, end_row=offset, end_column=len(self.__tags))
             for row in range(offset + 1, len(cards) + offset):
                 content = []

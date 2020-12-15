@@ -7,8 +7,8 @@ def get_project_start_date(all_board_and_card):
         return
 
     all_cards = []
-    for key in all_board_and_card:
-        for card in all_board_and_card[key]:
+    for board in all_board_and_card:
+        for card in board.get_cards():
             all_cards.append(card) 
 
     all_cards.sort(key=lambda v : v.get_date())
