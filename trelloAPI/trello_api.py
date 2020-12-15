@@ -1,5 +1,5 @@
-import model.card
-import model.board
+from . import card as trello_card
+from . import board as trello_board
 
 #プロジェクトのタスク開始日を取得する
 def get_project_start_date(all_board_and_card):
@@ -18,8 +18,10 @@ class TrelloAPI:
     __cards = []
 
     def __init__(self, content):
-        self.__board = model.board.Board()
+        self.__board = trello_board.Board()
         self.__board.set_name(content['name'])
+        self.__board.set_board_id(content['id'])
+        self.__board.set_desription(content['desc'])
 
         listname = {}
         for v in content['lists']:
@@ -30,7 +32,7 @@ class TrelloAPI:
             members[v['id']] = v['fullName']
 
         for card_json in content['cards']:
-            card = model.card.Card()
+            card = trello_card.Card()
             card.set_card_id(card_json['id'])
             card.set_name(card_json['name'])
             card.set_desc(card_json['desc'])

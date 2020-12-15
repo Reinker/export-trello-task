@@ -1,5 +1,5 @@
-import logic.trello_api
-import model.card
+import trelloAPI.trello_api as trello_api
+import trelloAPI.card as trello_card
 from openpyxl import Workbook
 from openpyxl.utils import column_index_from_string
 from openpyxl.styles import PatternFill, Border, Side
@@ -31,12 +31,12 @@ class ExportExcel:
             print('load file : ' + f)
             file_open = open('./jsons/' + f, 'r')
             content = json.load(file_open)
-            api = logic.trello_api.TrelloAPI(content)
+            api = trello_api.TrelloAPI(content)
             board = api.get_board()
             api.sort_cards_by_date()
             self.__contents[board.get_name()] = board.get_cards()
 
-        self.__project_start_date = datetime.strptime(logic.trello_api.get_project_start_date(self.__contents), '%Y-%m-%dT%H:%M:%S.%f%z')
+        self.__project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__contents), '%Y-%m-%dT%H:%M:%S.%f%z')
 
         months = []
         months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
