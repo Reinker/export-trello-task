@@ -1,7 +1,7 @@
 import trelloAPI.trello_api as trello_api
 import trelloAPI.card as trello_card
 from openpyxl import Workbook
-from openpyxl.utils import column_index_from_string
+from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import PatternFill, Border, Side
 import calendar
 from datetime import datetime
@@ -10,8 +10,8 @@ import csv
 import os
 
 ROW_START=1
-COL_START=1
-BORDER = Border(top=side,bottom=side,right=side,left=side)
+NORMAL_SIDE = Side(style='thin', color='000000')
+BORDER = Border(top=NORMAL_SIDE,bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
 PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
 
@@ -25,7 +25,6 @@ class ExportExcel:
         self.__wb = Workbook()
         self.__ws = self.__wb.active
         self.__ws.title = 'タスク一覧'
-        side = Side(style='thin', color='000000')
         self.__project_start_date = ''
 
     def import_from_files(self):
@@ -93,25 +92,47 @@ class ExportExcel:
         for board in self.__boards:
             for card in board.get_cards():
                 print(card.get_date())
+    
+    def __set_item_name_cell(self, col_num, width):
+        self.__ws.column_dimensions[get_column_letter(col_num)] = width
+        self.__ws.cell(row=ROW_START, column=col_num).fill = TOP_FILL
+        self.__ws.cell(row=ROW_START, column=col_num).border = BORDER
 
-    def __task_ids(self):
-        self.__ws.column_dimensions['A'] = 30
-        self.__ws.cell(row=ROW_START, column=1).fill = TOP_FILL
-        self.__ws.cell(row=ROW_START, column=1).border = TOP_FILL
-        row = 2
+    def task_ids(self, col_num): 
+        self.__set_item_name_cell(col_num, 30)
+        row = ROW_START + 1
         for board in self.__boards:
-            self.__ws.cell(row=row, column=1).value = board.get_board_id()
-            self.__ws.cell(row=row, column=1).fill = PHASE_FILL
-            self.__ws.cell(row=row, column=1).border = BORDER 
+            self.__ws.cell(row=row, column=col_num).value = board.get_board_id()
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                self.__ws.cell(row=row, column=1).value = card.get_card_id() 
+                self.__ws.cell(row=row, column=col_num).value = card.get_card_id() 
                 row += 1
 
-    def __task_names(self):
-        self.__ws.column_dimensions['B'] = 30
-        self.__ws.cell(row=ROW_START, column=1).fill = TOP_FILL
-
+    def task_names(self, col_num):
+        self.__set_item_name_cell(col_num, 30)
+        row = ROW_START + 1
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).value = board.get_name()
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).value = card.get_name()
+                row += 1
+    
+    def task_description(self, col_num):
+        self.__set_item_name_cell(col_num, 40)
+        row = ROW_START + 1
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).value = board.get_description()
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).value = card.get_desc()
+                row += 1
 
 
     #タグとフェーズの行を考慮してスタートを設定
