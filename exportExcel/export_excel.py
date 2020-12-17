@@ -3,13 +3,15 @@ import trelloAPI.card as trello_card
 from openpyxl import Workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import PatternFill, Border, Side
-import calendar
 from datetime import datetime
+import numpy as np
+import calendar
 import json
 import csv
 import os
 
 ROW_START=1
+DATA_ROW_START=3
 NORMAL_SIDE = Side(style='thin', color='000000')
 BORDER = Border(top=NORMAL_SIDE,bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
@@ -23,7 +25,6 @@ class ExportExcel:
         self.__wb = Workbook()
         self.__ws = self.__wb.active
         self.__ws.title = 'タスク一覧'
-        self.__project_start_date = ''
 
     def import_from_files(self):
         files = os.listdir('./jsons')
@@ -38,39 +39,50 @@ class ExportExcel:
             self.__boards.append(api.get_board())
             api.sort_cards_by_date()
 
-        #self.__project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__boards), '%Y-%m-%dT%H:%M:%S.%f%z')
-
-        #months = []
-        #months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month))
-        #try:
-        #    months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 1))
-        #except calendar.IllegalMonthError:
-        #    months.append(calendar.monthcalendar(self.__project_start_date.year, calendar.January))
-
-        #try:
-        #    months.append(calendar.monthcalendar(self.__project_start_date.year, self.__project_start_date.month + 2))
-        #except calendar.IllegalMonthError:
-        #    months.append(calendar.monthcalendar(self.__project_start_date.year, calendar.February))
-
-
-    def performance(self):
-        if len(self.__boards) < 1:
-            return
-
-        for board in self.__boards:
-            for card in board.get_cards():
-                print(card.get_date())
-    
     def __set_item_name_cell(self, col_num, width, name):
         self.__ws.column_dimensions[get_column_letter(col_num)].width = width
-        self.__ws.cell(row=ROW_START, column=col_num).value = name
+        self.__ws.cell(ROW_START, col_num).value = name
         self.__ws.cell(row=ROW_START, column=col_num).fill = TOP_FILL
+        self.__ws.cell(row=ROW_START+1, column=col_num).fill = TOP_FILL
         self.__ws.cell(row=ROW_START, column=col_num).border = BORDER
+        self.__ws.cell(row=ROW_START+1, column=col_num).border = BORDER
+        #self.__ws.merge_cells(start_row=ROW_START,end_row=DATA_ROW_START-1,start_column=col_num,end_column=col_num)
+
+    def performance(self):
+        self.__set_item_name_cell(self.__ws.max_column + 1, 15, '実績')
+
+        project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__boards), '%Y-%m-%dT%H:%M:%S.%f%z')
+        date = {}
+        for i in range(0, 3):
+            month = project_start_date.month + i
+            date_arr = []
+            try:
+                date_arr = np.array(calendar.monthcalendar(project_start_date.year, month)).ravel()
+            except calendar.IllegalMonthError:
+                month = month - 12
+                date_arr = np.array(calendar.monthcalendar(project_start_date.year + 1, month)).ravel()
+            date[month] = np.delete(date_arr, np.where(date_arr == 0))
+
+        col_offset = self.__ws.max_column
+        for month in date:
+            self.__ws.cell(ROW_START+1, col_offset).value = month
+            for i in range(0, len(date[month])):
+                self.__ws.cell(ROW_START, col_offset + i).fill = TOP_FILL
+                self.__ws.cell(ROW_START+1, col_offset + i).fill = TOP_FILL
+                self.__ws.cell(ROW_START, col_offset + i).border = BORDER 
+                self.__ws.cell(ROW_START+1, col_offset + i).border = BORDER 
+                self.__ws.cell(DATA_ROW_START, col_offset + i).fill = PHASE_FILL
+                self.__ws.cell(DATA_ROW_START, col_offset + i).border = BORDER 
+
+                self.__ws.cell(DATA_ROW_START, col_offset + i).value = date[month][i]
+            col_offset += len(date[month])
+
+
 
     def task_ids(self, col_num): 
         self.__set_item_name_cell(col_num, 30, 'ID')
 
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).value = board.get_board_id()
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -82,7 +94,7 @@ class ExportExcel:
 
     def task_names(self, col_num):
         self.__set_item_name_cell(col_num, 30, 'タスク名')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).value = board.get_name()
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -94,7 +106,7 @@ class ExportExcel:
     
     def task_description(self, col_num):
         self.__set_item_name_cell(col_num, 40, '説明')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).value = board.get_description()
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -106,7 +118,7 @@ class ExportExcel:
 
     def task_start_date(self, col_num):
         self.__set_item_name_cell(col_num, 30, '開始日')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
@@ -117,7 +129,7 @@ class ExportExcel:
 
     def task_last_activity_date(self, col_num):
         self.__set_item_name_cell(col_num, 30, '更新日')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
@@ -128,7 +140,7 @@ class ExportExcel:
 
     def task_list_name(self, col_num):
         self.__set_item_name_cell(col_num, 20, 'ステータス')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
@@ -139,7 +151,7 @@ class ExportExcel:
 
     def task_members(self, col_num):
         self.__set_item_name_cell(col_num, 20, '担当者')
-        row = ROW_START + 1
+        row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
@@ -160,5 +172,6 @@ class ExportExcel:
         self.task_last_activity_date(5)
         self.task_list_name(6)
         self.task_members(7)
+        self.performance()
 
         self.__wb.save('test.xlsx')
