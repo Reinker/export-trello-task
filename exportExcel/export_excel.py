@@ -40,7 +40,8 @@ class ExportExcel:
             api.sort_cards_by_date()
 
     def __set_item_name_cell(self, col_num, width, name):
-        self.__ws.column_dimensions[get_column_letter(col_num)].width = width
+        if width > 0:
+            self.__ws.column_dimensions[get_column_letter(col_num)].width = width
         self.__ws.cell(ROW_START, col_num).value = name
         self.__ws.cell(row=ROW_START, column=col_num).fill = TOP_FILL
         self.__ws.cell(row=ROW_START+1, column=col_num).fill = TOP_FILL
@@ -49,7 +50,7 @@ class ExportExcel:
         #self.__ws.merge_cells(start_row=ROW_START,end_row=DATA_ROW_START-1,start_column=col_num,end_column=col_num)
 
     def performance(self):
-        self.__set_item_name_cell(self.__ws.max_column + 1, 15, '実績')
+        self.__set_item_name_cell(self.__ws.max_column + 1, 0, '実績')
 
         project_start_date = datetime.strptime(trello_api.get_project_start_date(self.__boards), '%Y-%m-%dT%H:%M:%S.%f%z')
         date = {}
