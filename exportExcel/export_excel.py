@@ -9,17 +9,23 @@ import json
 import csv
 import os
 
+ROW_START=1
+COL_START=1
+BORDER = Border(top=side,bottom=side,right=side,left=side)
+TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
+PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
+
 class ExportExcel:
+
     def __init__(self, json_file):
         self.__json_file = json_file
         self.__boards = []
+        self.__row_count = 0
         self.__tags = ['フェーズ', 'ID', 'タスク名', 'タスク説明', '開始日', '更新日', 'ステータス', '担当者']
         self.__wb = Workbook()
         self.__ws = self.__wb.active
         self.__ws.title = 'タスク一覧'
-        self.__fill = PatternFill(fill_type='solid', fgColor='00FF00')
         side = Side(style='thin', color='000000')
-        self.__border = Border(top=side,bottom=side,right=side,left=side)
         self.__project_start_date = ''
 
     def import_from_files(self):
@@ -32,6 +38,7 @@ class ExportExcel:
             file_open = open('./jsons/' + f, 'r')
             json_str = json.load(file_open)
             api = trello_api.TrelloAPI(json_str)
+            self.__row_count += len(api.get_board().get_cards())
             self.__boards.append(api.get_board())
             api.sort_cards_by_date()
 
@@ -75,8 +82,8 @@ class ExportExcel:
         self.__ws.column_dimensions['G'].width = 25
         for row in self.__ws.iter_rows(min_row=1, max_col=len(self.__tags), max_row=1):
             for cell in row:
-                cell.fill = self.__fill
-                cell.border = self.__border
+                cell.fill = TOP_FILL
+                cell.border = BORDER
                 cell.value = self.__tags[cell.column - 1]
 
     def __set_performance(self):
@@ -86,6 +93,26 @@ class ExportExcel:
         for board in self.__boards:
             for card in board.get_cards():
                 print(card.get_date())
+
+    def __task_ids(self):
+        self.__ws.column_dimensions['A'] = 30
+        self.__ws.cell(row=ROW_START, column=1).fill = TOP_FILL
+        self.__ws.cell(row=ROW_START, column=1).border = TOP_FILL
+        row = 2
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=1).value = board.get_board_id()
+            self.__ws.cell(row=row, column=1).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=1).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                self.__ws.cell(row=row, column=1).value = card.get_card_id() 
+                row += 1
+
+    def __task_names(self):
+        self.__ws.column_dimensions['B'] = 30
+        self.__ws.cell(row=ROW_START, column=1).fill = TOP_FILL
+
+
 
     #タグとフェーズの行を考慮してスタートを設定
     def exportAsExcel(self):
