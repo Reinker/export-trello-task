@@ -2,6 +2,6 @@
 *.csv
 *.xlsx
 jsons/
-logic/__pycache__/
-model/__pycache__/
+trelloAPI/__pycache__
+exportExcel/__pycache__/
 

@@ -14,6 +14,8 @@ ROW_START=1
 DATA_ROW_START=3
 NORMAL_SIDE = Side(style='thin', color='000000')
 BORDER = Border(top=NORMAL_SIDE,bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
+CONVEX_BORDER = Border(top=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
+CONVEX_DOWNWARD_BORDER = Border(bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
 PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
 
@@ -45,9 +47,8 @@ class ExportExcel:
         self.__ws.cell(ROW_START, col_num).value = name
         self.__ws.cell(row=ROW_START, column=col_num).fill = TOP_FILL
         self.__ws.cell(row=ROW_START+1, column=col_num).fill = TOP_FILL
-        self.__ws.cell(row=ROW_START, column=col_num).border = BORDER
-        self.__ws.cell(row=ROW_START+1, column=col_num).border = BORDER
-        #self.__ws.merge_cells(start_row=ROW_START,end_row=DATA_ROW_START-1,start_column=col_num,end_column=col_num)
+        self.__ws.cell(row=ROW_START, column=col_num).border = CONVEX_BORDER
+        self.__ws.cell(row=ROW_START+1, column=col_num).border = CONVEX_DOWNWARD_BORDER
 
     def performance(self):
         self.__set_item_name_cell(self.__ws.max_column + 1, 0, '実績')
