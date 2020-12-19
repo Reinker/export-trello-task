@@ -53,7 +53,7 @@ class ExportExcel:
     def performance(self):
         self.__set_item_name_cell(self.__ws.max_column + 1, 0, '実績')
 
-        project_start_date = trello_api.str_to_trello_format_datetime(trello_api.get_project_start_date(self.__boards))
+        project_start_date = trello_api.get_project_start_date(self.__boards)
         date = {}
         for i in range(0, 3):
             month = project_start_date.month + i

@@ -16,13 +16,13 @@ def get_project_start_date(all_board_and_card):
     return all_cards[0].get_date()
 
 def is_task_date_in_date(card, date):
-    start_date = str_to_trello_format_datetime(card.get_date())
-    end_date = str_to_trello_format_datetime(card.get_due())
+    start_date = card.get_date()
+    end_date = card.get_due()
     return start_date <= date and end_date >= date
 
 def is_task_actual_date_in_date(card, date):
-    start_date = str_to_trello_format_datetime(card.get_date())
-    end_date = str_to_trello_format_datetime(card.get_date_last_activity())
+    start_date = card.get_date()
+    end_date = card.get_date_last_activity()
     return start_date <= date and end_date >= date
 
 def str_to_trello_format_datetime(date_str):

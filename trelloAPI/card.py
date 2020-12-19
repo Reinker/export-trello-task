@@ -1,13 +1,16 @@
+from datetime import datetime
+from . import trello_api
+
 class Card :
     __card_id = ''
     __name = ''
     __desc = ''
-    __date = ''
+    __date = datetime.now()
     __listname = ''
     __closed = False
     __membernames = []
-    __date_last_activity = ''
-    __due = ''
+    __date_last_activity = datetime.now()
+    __due = datetime.now()
     __due_complete = False
     
     def set_card_id(self, card_id):
@@ -29,16 +32,25 @@ class Card :
         self.__membernames = membernames
 
     def set_date_last_activity(self, date_last_activity):
-        self.__date_last_activity = date_last_activity
+        try:
+            self.__date_last_activity = trello_api.str_to_trello_format_datetime(date_last_activity) 
+        except TypeError:
+            self.__date_last_activity = None
 
     def set_due(self, due):
-        self.__due = due
+        try: 
+            self.__due = trello_api.str_to_trello_format_datetime(due)
+        except TypeError:
+            self.__date_last_activity = None
 
     def set_due_complete(self, due_complete):
-        self.__due_complete = due_complete
+        try:
+            self.__due_complete = due_complete
+        except TypeError:
+            self.__due_complete = None 
 
     def set_date(self, date):
-        self.__date = date
+        self.__date = trello_api.str_to_trello_format_datetime(date)
 
     def get_card_id(self):
         return self.__card_id
