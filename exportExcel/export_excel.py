@@ -18,8 +18,7 @@ CONVEX_BORDER = Border(top=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 CONVEX_DOWNWARD_BORDER = Border(bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
 PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
-DATE_FILL = PatternFill(fill_type='solid', fgColor='0000FF')
-ACTUAL_DATE_FILL = PatternFill(fill_type='solid', fgColor='FF0000')
+DATE_FILL = PatternFill(fill_type='solid', fgColor='6666FF')
 
 class ExportExcel:
 
@@ -87,14 +86,16 @@ class ExportExcel:
         return dates
 
     def __fill_task_date_in_date(self, dates, card, row, col):
-        for i in range(0, len(dates)):
-            for j in range(0, len(dates[i])):
-                if trello_api.is_task_date_in_date(card, dates[i][j]):
-                    self.__ws.cell(row, col + i * len(dates[i]) + j).fill = DATE_FILL
-                    self.__ws.cell(row, col + i * len(dates[i]) + j).border = BORDER 
-                elif trello_api.is_task_actual_date_in_date(card, dates[i][j]):
-                    self.__ws.cell(row, col + i * len(dates[i]) + j).fill = ACTUAL_DATE_FILL
-                    self.__ws.cell(row, col + i * len(dates[i]) + j).border = BORDER 
+        col_offset = col
+        for month in dates:
+            for date in month:
+                self.__ws.cell(row, col_offset + date.day - 1).border = BORDER 
+                if trello_api.is_task_date_in_date(card, date):
+                    self.__ws.cell(row, col_offset + date.day - 1).fill = DATE_FILL
+
+                if trello_api.is_task_actual_date_in_date(card, date):
+                    self.__ws.cell(row, col_offset + date.day - 1).value = '○' 
+            col_offset += len(month)
 
 
     def performance(self, max_col):
