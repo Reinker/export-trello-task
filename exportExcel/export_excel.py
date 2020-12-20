@@ -18,6 +18,8 @@ CONVEX_BORDER = Border(top=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 CONVEX_DOWNWARD_BORDER = Border(bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
 PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
+DATE_FILL = PatternFill(fill_type='solid', fgColor='0000FF')
+ACTUAL_DATE_FILL = PatternFill(fill_type='solid', fgColor='FF0000')
 
 class ExportExcel:
 
@@ -50,25 +52,29 @@ class ExportExcel:
         self.__ws.cell(row=ROW_START, column=col_num).border = CONVEX_BORDER
         self.__ws.cell(row=ROW_START+1, column=col_num).border = CONVEX_DOWNWARD_BORDER
 
-    def performance(self):
-        self.__set_item_name_cell(self.__ws.max_column + 1, 0, '実績')
+    def __set_performance_date_cell(self, max_col):
+        self.__set_item_name_cell(max_col + 1, 0, '実績')
 
         project_start_date = trello_api.get_project_start_date(self.__boards)
-        date = {}
+        dates = []
         for i in range(0, 3):
+            year = project_start_date.year
             month = project_start_date.month + i
-            date_arr = []
             try:
-                date_arr = np.array(calendar.monthcalendar(project_start_date.year, month)).ravel()
+                dates_sum = sum(calendar.Calendar().monthdatescalendar(year, month), [])
+                filtered_dates = list(filter(lambda x: x.month == month, dates_sum))
+                dates.append(filtered_dates)
             except calendar.IllegalMonthError:
                 month = month - 12
-                date_arr = np.array(calendar.monthcalendar(project_start_date.year + 1, month)).ravel()
-            date[month] = np.delete(date_arr, np.where(date_arr == 0))
-
+                year += 1
+                dates_sum = sum(calendar.Calendar().monthdatescalendar(year, month), [])
+                filtered_dates = list(filter(lambda x: x.month == month, dates_sum))
+                dates.append(filtered_dates)
+        
         col_offset = self.__ws.max_column
-        for month in date:
-            self.__ws.cell(ROW_START+1, col_offset).value = month
-            for i in range(0, len(date[month])):
+        for date in dates:
+            self.__ws.cell(ROW_START+1, col_offset).value = date[0].month
+            for i in range(0, len(date)):
                 self.__ws.cell(ROW_START, col_offset + i).fill = TOP_FILL
                 self.__ws.cell(ROW_START+1, col_offset + i).fill = TOP_FILL
                 self.__ws.cell(ROW_START, col_offset + i).border = BORDER 
@@ -76,10 +82,27 @@ class ExportExcel:
                 self.__ws.cell(DATA_ROW_START, col_offset + i).fill = PHASE_FILL
                 self.__ws.cell(DATA_ROW_START, col_offset + i).border = BORDER 
 
-                self.__ws.cell(DATA_ROW_START, col_offset + i).value = date[month][i]
-            col_offset += len(date[month])
+                self.__ws.cell(DATA_ROW_START, col_offset + i).value = date[i].day
+            col_offset += len(date)
+        return dates
+
+    #def __fill_task_date_in_date(dates):
+    #    for month in dates:
+    #        for day in dates[month]:
+    #            if trello_api.is_task_date_in_date(date):
+    #                self.__ws(row, col).fill = DATE_FILL
 
 
+    def performance(self, max_col):
+        dates = self.__set_performance_date_cell(max_col)
+        #row = DATA_ROW_START
+        #col = max_col + 1
+        #for board in self.__boards:
+        #    row += 1
+        #    for card in board.get_cards():
+        #        for month in dates:
+        #            print(month)
+                
 
     def task_ids(self, col_num): 
         self.__set_item_name_cell(col_num, 30, 'ID')
@@ -174,6 +197,6 @@ class ExportExcel:
         self.task_last_activity_date(5)
         self.task_list_name(6)
         self.task_members(7)
-        self.performance()
+        self.performance(self.__ws.max_column)
 
         self.__wb.save('test.xlsx')
