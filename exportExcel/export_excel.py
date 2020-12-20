@@ -4,6 +4,7 @@ from openpyxl import Workbook
 from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import PatternFill, Border, Side
 from datetime import datetime
+from datetime import timezone
 import numpy as np
 import calendar
 import json
@@ -62,6 +63,8 @@ class ExportExcel:
             try:
                 dates_sum = sum(calendar.Calendar().monthdatescalendar(year, month), [])
                 filtered_dates = list(filter(lambda x: x.month == month, dates_sum))
+                if month == project_start_date.month:
+                    filtered_dates = list(filter(lambda x: x.day >= project_start_date.day, filtered_dates))
                 dates.append(filtered_dates)
             except calendar.IllegalMonthError:
                 month = month - 12
@@ -69,6 +72,7 @@ class ExportExcel:
                 dates_sum = sum(calendar.Calendar().monthdatescalendar(year, month), [])
                 filtered_dates = list(filter(lambda x: x.month == month, dates_sum))
                 dates.append(filtered_dates)
+
         
         col_offset = self.__ws.max_column
         for date in dates:
@@ -88,13 +92,16 @@ class ExportExcel:
     def __fill_task_date_in_date(self, dates, card, row, col):
         col_offset = col
         for month in dates:
+            col_count = 0
             for date in month:
-                self.__ws.cell(row, col_offset + date.day - 1).border = BORDER 
+                self.__ws.cell(row, col_offset + col_count).border = BORDER 
                 if trello_api.is_task_date_in_date(card, date):
-                    self.__ws.cell(row, col_offset + date.day - 1).fill = DATE_FILL
+                    self.__ws.cell(row, col_offset + col_count).fill = DATE_FILL
 
                 if trello_api.is_task_actual_date_in_date(card, date):
-                    self.__ws.cell(row, col_offset + date.day - 1).value = '○' 
+                    self.__ws.cell(row, col_offset + col_count).value = '○' 
+                col_count += 1
+
             col_offset += len(month)
 
 
