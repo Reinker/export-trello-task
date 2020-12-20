@@ -86,22 +86,22 @@ class ExportExcel:
             col_offset += len(date)
         return dates
 
-    #def __fill_task_date_in_date(dates):
-    #    for month in dates:
-    #        for day in dates[month]:
-    #            if trello_api.is_task_date_in_date(date):
-    #                self.__ws(row, col).fill = DATE_FILL
+    def __fill_task_date_in_date(self, dates, card, row, col):
+        for i in range(0, len(dates)):
+            for j in range(0, len(dates[i])):
+                if trello_api.is_task_date_in_date(card, dates[i][j]):
+                    self.__ws.cell(row, col + i * len(dates[i]) + j).fill = DATE_FILL
 
 
     def performance(self, max_col):
         dates = self.__set_performance_date_cell(max_col)
-        #row = DATA_ROW_START
-        #col = max_col + 1
-        #for board in self.__boards:
-        #    row += 1
-        #    for card in board.get_cards():
-        #        for month in dates:
-        #            print(month)
+        row = DATA_ROW_START
+        col = max_col + 1
+        for board in self.__boards:
+            row += 1
+            for card in board.get_cards():
+                self.__fill_task_date_in_date(dates, card, row, col)
+                row += 1
                 
 
     def task_ids(self, col_num): 

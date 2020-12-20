@@ -1,5 +1,6 @@
 from datetime import datetime
 from . import trello_api
+from datetime import timezone
 
 class Card :
     __card_id = ''
@@ -12,7 +13,7 @@ class Card :
     __date_last_activity = datetime.now()
     __due = datetime.now()
     __due_complete = False
-    
+
     def set_card_id(self, card_id):
         self.__card_id = card_id
 
@@ -32,22 +33,13 @@ class Card :
         self.__membernames = membernames
 
     def set_date_last_activity(self, date_last_activity):
-        try:
-            self.__date_last_activity = trello_api.str_to_trello_format_datetime(date_last_activity) 
-        except TypeError:
-            self.__date_last_activity = None
+        self.__date_last_activity = trello_api.str_to_trello_format_datetime(date_last_activity)
 
     def set_due(self, due):
-        try: 
-            self.__due = trello_api.str_to_trello_format_datetime(due)
-        except TypeError:
-            self.__date_last_activity = None
+        self.__due = trello_api.str_to_trello_format_datetime(due)
 
     def set_due_complete(self, due_complete):
-        try:
-            self.__due_complete = due_complete
-        except TypeError:
-            self.__due_complete = None 
+        self.__due_complete = due_complete
 
     def set_date(self, date):
         self.__date = trello_api.str_to_trello_format_datetime(date)
@@ -78,6 +70,6 @@ class Card :
 
     def get_due_complete(self):
         return self.__due_complete
-    
+
     def get_date(self):
         return self.__date

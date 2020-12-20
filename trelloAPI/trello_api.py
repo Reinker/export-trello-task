@@ -1,6 +1,9 @@
 from . import card as trello_card
 from . import board as trello_board
 from datetime import datetime
+from datetime import timezone
+
+MAX_YEAR = 9999
 
 #プロジェクトのタスク開始日を取得する
 def get_project_start_date(all_board_and_card):
@@ -18,14 +21,25 @@ def get_project_start_date(all_board_and_card):
 def is_task_date_in_date(card, date):
     start_date = card.get_date()
     end_date = card.get_due()
+    if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
+        return False
+
+    date = datetime(date.year, date.month, date.day, 0, 0, 0, 0, timezone.utc)
     return start_date <= date and end_date >= date
 
 def is_task_actual_date_in_date(card, date):
     start_date = card.get_date()
     end_date = card.get_date_last_activity()
+    if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
+        return False
+
+    date = datetime(date.year, date.month, date.day, 0, 0, 0, 0, timezone.utc)
     return start_date <= date and end_date >= date
 
 def str_to_trello_format_datetime(date_str):
+    if date_str == None:
+        return datetime.strptime('9999-12-31T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%f%z')
+
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
 class TrelloAPI:
