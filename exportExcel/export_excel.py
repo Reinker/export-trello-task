@@ -91,6 +91,10 @@ class ExportExcel:
             for j in range(0, len(dates[i])):
                 if trello_api.is_task_date_in_date(card, dates[i][j]):
                     self.__ws.cell(row, col + i * len(dates[i]) + j).fill = DATE_FILL
+                    self.__ws.cell(row, col + i * len(dates[i]) + j).border = BORDER 
+                elif trello_api.is_task_actual_date_in_date(card, dates[i][j]):
+                    self.__ws.cell(row, col + i * len(dates[i]) + j).fill = ACTUAL_DATE_FILL
+                    self.__ws.cell(row, col + i * len(dates[i]) + j).border = BORDER 
 
 
     def performance(self, max_col):
