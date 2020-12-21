@@ -43,8 +43,6 @@ def str_to_trello_format_datetime(date_str):
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
 class TrelloAPI:
-    __cards = []
-
     def __init__(self, content):
         self.__board = trello_board.Board()
         self.__board.set_name(content['name'])
@@ -59,6 +57,7 @@ class TrelloAPI:
         for v in content['members']:
             members[v['id']] = v['fullName']
 
+        cards = []
         for card_json in content['cards']:
             card = trello_card.Card()
             card.set_card_id(card_json['id'])
@@ -82,15 +81,17 @@ class TrelloAPI:
             for member_json in card_json['idMembers']:
                 membernames.append(members[member_json])
             card.set_membernames(membernames)
-            self.__cards.append(card)
+            cards.append(card)
 
-        self.__board.set_cards(self.__cards)
+        self.__board.set_cards(cards)
 
     def get_cards(self):
-        return self.__cards
+        return self.__board.get_cards()
 
     def get_board(self):
         return self.__board
 
     def sort_cards_by_date(self):
-        self.__cards.sort(key=lambda v : v.get_date())
+        cards = self.__board.get_cards()
+        cards.sort(key=lambda v : v.get_date())
+        self.__board.set_cards(cards)

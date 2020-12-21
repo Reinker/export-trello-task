@@ -40,8 +40,8 @@ class ExportExcel:
             file_open = open('./jsons/' + f, 'r')
             json_str = json.load(file_open)
             api = trello_api.TrelloAPI(json_str)
-            self.__boards.append(api.get_board())
             api.sort_cards_by_date()
+            self.__boards.append(api.get_board())
 
     def __set_item_name_cell(self, col_num, width, name):
         if width > 0:
@@ -175,6 +175,28 @@ class ExportExcel:
                 self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
                 row += 1
 
+    def task_due_date(self, col_num):
+        self.__set_item_name_cell(col_num, 30, '終了日')
+        row = DATA_ROW_START
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                row += 1
+
+    def task_actual_due_date(self, col_num):
+        self.__set_item_name_cell(col_num, 30, '終了日')
+        row = DATA_ROW_START
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                row += 1
+
     def task_list_name(self, col_num):
         self.__set_item_name_cell(col_num, 20, 'ステータス')
         row = DATA_ROW_START
@@ -205,10 +227,10 @@ class ExportExcel:
         self.task_ids(1) 
         self.task_names(2)
         self.task_description(3)
-        self.task_start_date(4)
-        self.task_last_activity_date(5)
-        self.task_list_name(6)
-        self.task_members(7)
+        self.task_members(4)
+        self.task_list_name(5)
+        self.task_start_date(6)
+        self.task_last_activity_date(7)
         self.performance(self.__ws.max_column)
 
         self.__wb.save('test.xlsx')
