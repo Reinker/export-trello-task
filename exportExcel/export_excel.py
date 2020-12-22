@@ -176,31 +176,34 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                self.__ws.cell(row=row, column=col_num).value = card.get_date()
-                row += 1
-
-    def task_last_activity_date(self):
-        col_num = self.__col_offset
-        self.__set_item_name_cell(30, '更新日')
-        row = DATA_ROW_START
-        for board in self.__boards:
-            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
-            self.__ws.cell(row=row, column=col_num).border = BORDER 
-            row += 1
-            for card in board.get_cards():
-                self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                if card.get_date().year != 9999:
+                    self.__ws.cell(row=row, column=col_num).value = card.get_date()
                 row += 1
 
     def task_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '終了日')
+        self.__set_item_name_cell(30, '終了予定日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                if card.get_due().year != 9999:
+                    self.__ws.cell(row=row, column=col_num).value = card.get_due()
+                row += 1
+
+    def task_last_activity_date(self):
+        col_num = self.__col_offset
+        self.__set_item_name_cell(30, '最終更新日')
+        row = DATA_ROW_START
+        for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
+            for card in board.get_cards():
+                if card.get_date_last_activity().year != 9999:
+                    self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
                 row += 1
 
     def task_actual_due_date(self):
@@ -212,7 +215,8 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                if card.get_due_complete():
+                    self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
                 row += 1
 
     def task_list_name(self):
@@ -249,6 +253,8 @@ class ExportExcel:
         self.task_members()
         self.task_list_name()
         self.task_start_date()
+        self.task_due_date()
+        self.task_actual_due_date()
         self.task_last_activity_date()
         self.performance(self.__ws.max_column)
 
