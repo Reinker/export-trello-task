@@ -20,7 +20,9 @@ def get_project_start_date(all_board_and_card):
 
 def is_task_date_in_date(card, date):
     start_date = card.get_date()
+    start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0, 0, timezone.utc)
     end_date = card.get_due()
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0, 0, timezone.utc)
     if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
         return False
 
@@ -29,7 +31,9 @@ def is_task_date_in_date(card, date):
 
 def is_task_actual_date_in_date(card, date):
     start_date = card.get_date()
+    start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0, 0, timezone.utc)
     end_date = card.get_date_last_activity()
+    end_date = datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0, 0, timezone.utc)
     if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
         return False
 
