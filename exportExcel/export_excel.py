@@ -156,7 +156,7 @@ class ExportExcel:
     
     def task_description(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(40, '説明')
+        self.__set_item_name_cell(30, '説明')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).value = board.get_description()
@@ -169,7 +169,7 @@ class ExportExcel:
 
     def task_start_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '開始日')
+        self.__set_item_name_cell(20, '開始日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -182,7 +182,7 @@ class ExportExcel:
 
     def task_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '終了予定日')
+        self.__set_item_name_cell(20, '終了予定日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -195,7 +195,7 @@ class ExportExcel:
 
     def task_last_activity_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '最終更新日')
+        self.__set_item_name_cell(20, '最終更新日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -208,14 +208,14 @@ class ExportExcel:
 
     def task_actual_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '終了日')
+        self.__set_item_name_cell(20, '終了日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                if card.get_due_complete():
+                if card.get_due_complete() or card.get_closed():
                     self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
                 row += 1
 
@@ -233,7 +233,7 @@ class ExportExcel:
 
     def task_members(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, '担当者')
+        self.__set_item_name_cell(10, '担当者')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL

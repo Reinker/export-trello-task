@@ -13,6 +13,7 @@ class Card :
     __date_last_activity = datetime.now()
     __due = datetime.now()
     __due_complete = False
+    __id_check_list = []
 
     def set_card_id(self, card_id):
         self.__card_id = card_id
@@ -44,6 +45,9 @@ class Card :
     def set_date(self, date):
         self.__date = trello_api.str_to_trello_format_datetime(date)
 
+    def set_id_check_list(self, id_check_list):
+        self.__id_check_list = id_check_list
+
     def get_card_id(self):
         return self.__card_id
 
@@ -73,3 +77,6 @@ class Card :
 
     def get_date(self):
         return self.__date
+    
+    def get_id_check_list(self):
+        return self.__id_check_list
