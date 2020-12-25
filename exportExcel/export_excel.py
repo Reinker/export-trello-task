@@ -41,8 +41,9 @@ class ExportExcel:
             file_open = open('./jsons/' + f, 'r')
             json_str = json.load(file_open)
             api = trello_api.TrelloAPI(json_str)
+            api.map_to_board()
             api.sort_cards_by_date()
-            self.__boards.append(api.get_board())
+            self.__boards.append(api.board())
 
     def __set_item_name_cell(self, width, name):
         col_num = self.__col_offset 
@@ -242,6 +243,11 @@ class ExportExcel:
             for card in board.get_cards():
                 self.__ws.cell(row=row, column=col_num).value = ','.join(card.get_membernames())
                 row += 1
+    def task_indicator(self):
+        for board in self.__boards:
+            for card in board.get_cards():
+                for list in card.get_check_list():
+                    print(list.get_name())
 
     def exportAsExcel(self):
         if len(self.__boards) < 1:
@@ -257,5 +263,6 @@ class ExportExcel:
         self.task_actual_due_date()
         self.task_last_activity_date()
         self.performance(self.__ws.max_column)
+        self.task_indicator()
 
         self.__wb.save('test.xlsx')

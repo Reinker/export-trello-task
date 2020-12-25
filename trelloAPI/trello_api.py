@@ -1,5 +1,6 @@
-from . import card as trello_card
-from . import board as trello_board
+from trelloAPI import card as trello_card
+from trelloAPI import board as trello_board
+from trelloAPI import check_lists as trello_check_lists
 from datetime import datetime
 from datetime import timezone
 
@@ -47,22 +48,29 @@ def str_to_trello_format_datetime(date_str):
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
 class TrelloAPI:
-    def __init__(self, content):
+    def __init__(self, json_content):
+        self.__json_content = json_content
         self.__board = trello_board.Board()
-        self.__board.set_name(content['name'])
-        self.__board.set_board_id(content['id'])
-        self.__board.set_desription(content['desc'])
+        self.__check_lists = []
 
+    def map_to_board(self):
+        self.__board.set_name(self.__json_content['name'])
+        self.__board.set_board_id(self.__json_content['id'])
+        self.__board.set_desription(self.__json_content['desc'])
+        self.__map_to_check_lists()
+        self.__map_to_cards()
+
+    def __map_to_cards(self):
         listname = {}
-        for v in content['lists']:
+        for v in self.__json_content['lists']:
             listname[v['id']] = v['name']
 
         members = {}
-        for v in content['members']:
+        for v in self.__json_content['members']:
             members[v['id']] = v['fullName']
 
         cards = []
-        for card_json in content['cards']:
+        for card_json in self.__json_content['cards']:
             card = trello_card.Card()
             card.set_card_id(card_json['id'])
             card.set_name(card_json['name'])
@@ -72,8 +80,9 @@ class TrelloAPI:
             card.set_date_last_activity(card_json['dateLastActivity'])
             card.set_due(card_json['due'])
             card.set_due_complete(card_json['dueComplete'])
+            card.set_check_list(list(filter(lambda x: x.get_id_card() == card.get_card_id(), self.__check_lists)))
 
-            for action in content['actions']:
+            for action in self.__json_content['actions']:
                 try:
                     card_id = action['data']['card']['id']
                 except KeyError:
@@ -89,13 +98,23 @@ class TrelloAPI:
 
         self.__board.set_cards(cards)
 
-    def get_cards(self):
+    def __map_to_check_lists(self):
+        for check_list in self.__json_content['checklists']:
+            trello_check_list = trello_check_lists.Check_Lists()
+            trello_check_list.set_check_lists_id(check_list['id'])
+            trello_check_list.set_name(check_list['name'])
+            trello_check_list.set_id_card(check_list['idCard'])
+            trello_check_list.set_check_items(check_list['checkItems'])
+            self.__check_lists.append(trello_check_list)
+
+    def cards(self):
         return self.__board.get_cards()
 
-    def get_board(self):
+    def board(self):
         return self.__board
 
     def sort_cards_by_date(self):
         cards = self.__board.get_cards()
         cards.sort(key=lambda v : v.get_date())
         self.__board.set_cards(cards)
+
