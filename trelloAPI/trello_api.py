@@ -47,6 +47,12 @@ def str_to_trello_format_datetime(date_str):
 
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
+def calc_progress(check_list):
+    if len(check_list) < 1:
+        return 
+
+    return str(int(100 * (len(list(filter(lambda x: x['state'] == 'complete', check_list))) / len(check_list)))) + '%'
+
 class TrelloAPI:
     def __init__(self, json_content):
         self.__json_content = json_content

@@ -243,11 +243,19 @@ class ExportExcel:
             for card in board.get_cards():
                 self.__ws.cell(row=row, column=col_num).value = ','.join(card.get_membernames())
                 row += 1
+
     def task_indicator(self):
+        col_num = self.__col_offset
+        self.__set_item_name_cell(10, '進捗率')
+        row = DATA_ROW_START
         for board in self.__boards:
+            self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
+            self.__ws.cell(row=row, column=col_num).border = BORDER 
+            row += 1
             for card in board.get_cards():
-                for list in card.get_check_list():
-                    print(list.get_name())
+                row += 1
+                for check_list in card.get_check_list():
+                    self.__ws.cell(row=row, column=col_num).value = trello_api.calc_progress(check_list.get_check_items())
 
     def exportAsExcel(self):
         if len(self.__boards) < 1:
@@ -258,11 +266,11 @@ class ExportExcel:
         self.task_description()
         self.task_members()
         self.task_list_name()
+        self.task_indicator()
         self.task_start_date()
         self.task_due_date()
         self.task_actual_due_date()
         self.task_last_activity_date()
         self.performance(self.__ws.max_column)
-        self.task_indicator()
 
         self.__wb.save('test.xlsx')
