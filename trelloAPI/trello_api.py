@@ -4,7 +4,7 @@ from trelloAPI import check_lists as trello_check_lists
 from datetime import datetime
 from datetime import timezone
 
-MAX_YEAR = 9999
+INVALID_DATE_TIME = datetime.strptime('9999-12-31T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%f%z')
 
 #プロジェクトのタスク開始日を取得する
 def get_project_start_date(all_board_and_card):
@@ -24,7 +24,7 @@ def is_task_date_in_date(card, date):
     start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0, 0, timezone.utc)
     end_date = card.get_due()
     end_date = datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0, 0, timezone.utc)
-    if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
+    if start_date == INVALID_DATE_TIME or end_date == INVALID_DATE_TIME:
         return False
 
     date = datetime(date.year, date.month, date.day, 0, 0, 0, 0, timezone.utc)
@@ -35,7 +35,7 @@ def is_task_actual_date_in_date(card, date):
     start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0, 0, timezone.utc)
     end_date = card.get_date_last_activity()
     end_date = datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0, 0, timezone.utc)
-    if start_date.year == MAX_YEAR or end_date.year == MAX_YEAR:
+    if start_date == INVALID_DATE_TIME or end_date == INVALID_DATE_TIME:
         return False
 
     date = datetime(date.year, date.month, date.day, 0, 0, 0, 0, timezone.utc)
@@ -43,7 +43,7 @@ def is_task_actual_date_in_date(card, date):
 
 def str_to_trello_format_datetime(date_str):
     if date_str == None:
-        return datetime.strptime('9999-12-31T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%f%z')
+        return INVALID_DATE_TIME
 
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 

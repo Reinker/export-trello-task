@@ -177,7 +177,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                if card.get_date().year != 9999:
+                if card.get_date() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date())
                 row += 1
 
@@ -190,7 +190,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                if card.get_due().year != 9999:
+                if card.get_due() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_due())
                 row += 1
 
@@ -203,7 +203,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                if card.get_date_last_activity().year != 9999:
+                if card.get_date_last_activity() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date_last_activity())
                 row += 1
 
