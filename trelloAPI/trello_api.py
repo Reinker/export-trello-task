@@ -53,6 +53,9 @@ def calc_progress(check_list):
 
     return str(int(100 * (len(list(filter(lambda x: x['state'] == 'complete', check_list))) / len(check_list)))) + '%'
 
+def datetime_to_date(date_time):
+    return datetime.date(date_time)
+
 class TrelloAPI:
     def __init__(self, json_content):
         self.__json_content = json_content

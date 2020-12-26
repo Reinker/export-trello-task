@@ -157,7 +157,7 @@ class ExportExcel:
     
     def task_description(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(30, '説明')
+        self.__set_item_name_cell(20, '説明')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).value = board.get_description()
@@ -170,7 +170,7 @@ class ExportExcel:
 
     def task_start_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, '開始日')
+        self.__set_item_name_cell(10, '開始日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -178,12 +178,12 @@ class ExportExcel:
             row += 1
             for card in board.get_cards():
                 if card.get_date().year != 9999:
-                    self.__ws.cell(row=row, column=col_num).value = card.get_date()
+                    self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date())
                 row += 1
 
     def task_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, '終了予定日')
+        self.__set_item_name_cell(10, '終了予定日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -191,12 +191,12 @@ class ExportExcel:
             row += 1
             for card in board.get_cards():
                 if card.get_due().year != 9999:
-                    self.__ws.cell(row=row, column=col_num).value = card.get_due()
+                    self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_due())
                 row += 1
 
     def task_last_activity_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, '最終更新日')
+        self.__set_item_name_cell(10, '最終更新日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -204,12 +204,12 @@ class ExportExcel:
             row += 1
             for card in board.get_cards():
                 if card.get_date_last_activity().year != 9999:
-                    self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                    self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date_last_activity())
                 row += 1
 
     def task_actual_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, '終了日')
+        self.__set_item_name_cell(10, '終了日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -217,12 +217,12 @@ class ExportExcel:
             row += 1
             for card in board.get_cards():
                 if card.get_due_complete() or card.get_closed():
-                    self.__ws.cell(row=row, column=col_num).value = card.get_date_last_activity()
+                    self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date_last_activity())
                 row += 1
 
     def task_list_name(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(20, 'ステータス')
+        self.__set_item_name_cell(15, 'ステータス')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
