@@ -5,6 +5,7 @@ from openpyxl.utils import column_index_from_string, get_column_letter
 from openpyxl.styles import PatternFill, Border, Side
 from datetime import datetime
 from datetime import timezone
+from datetime import date
 import numpy as np
 import calendar
 import json
@@ -257,6 +258,23 @@ class ExportExcel:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.calc_progress(check_list.get_check_items())
                 row += 1
 
+    def filled_task(self):
+        row = DATA_ROW_START
+        for board in self.__boards:
+            row += 1
+            for card in board.get_cards():
+                if card.get_due_complete() or card.get_closed():
+                    self.__fill_all_column('BBBBBB', row)
+                elif date.today() >= trello_api.datetime_to_date(card.get_due()):
+                    self.__fill_all_column('FF3333', row)
+                row += 1
+
+
+    def __fill_all_column(self, fill_color, row):
+        for col in range(1, self.__ws.max_column + 1):
+            self.__ws.cell(row=row, column=col).border = BORDER 
+            self.__ws.cell(row, col).fill = PatternFill(fill_type='solid', fgColor=fill_color)
+
     def exportAsExcel(self):
         if len(self.__boards) < 1:
             return
@@ -273,5 +291,6 @@ class ExportExcel:
         self.task_last_activity_date()
         self.__ws.freeze_panes = get_column_letter(self.__col_offset) + str(ROW_START)
         self.performance(self.__ws.max_column)
+        self.filled_task()
 
         self.__wb.save('test.xlsx')
