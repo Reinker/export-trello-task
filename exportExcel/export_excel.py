@@ -253,9 +253,9 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
-                row += 1
                 for check_list in card.get_check_list():
                     self.__ws.cell(row=row, column=col_num).value = trello_api.calc_progress(check_list.get_check_items())
+                row += 1
 
     def exportAsExcel(self):
         if len(self.__boards) < 1:
