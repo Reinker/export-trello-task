@@ -143,6 +143,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 self.__ws.cell(row=row, column=col_num).value = card.get_card_id() 
                 row += 1
 
@@ -156,6 +157,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 self.__ws.cell(row=row, column=col_num).value = card.get_name()
                 row += 1
     
@@ -169,6 +171,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 self.__ws.cell(row=row, column=col_num).value = card.get_desc()
                 row += 1
 
@@ -181,6 +184,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 if card.get_date() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date())
                 row += 1
@@ -194,6 +198,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 if card.get_due() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_due())
                 row += 1
@@ -207,6 +212,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 if card.get_date_last_activity() != trello_api.INVALID_DATE_TIME:
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date_last_activity())
                 row += 1
@@ -220,6 +226,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 if card.get_due_complete() or card.get_closed():
                     self.__ws.cell(row=row, column=col_num).value = trello_api.datetime_to_date(card.get_date_last_activity())
                 row += 1
@@ -233,6 +240,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 self.__ws.cell(row=row, column=col_num).value = card.get_listname()
                 row += 1
 
@@ -245,6 +253,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 self.__ws.cell(row=row, column=col_num).value = ','.join(card.get_membernames())
                 row += 1
 
@@ -257,6 +266,7 @@ class ExportExcel:
             self.__ws.cell(row=row, column=col_num).border = BORDER 
             row += 1
             for card in board.get_cards():
+                self.__ws.cell(row=row, column=col_num).border = BORDER 
                 for check_list in card.get_check_list():
                     self.__ws.cell(row=row, column=col_num).value = trello_api.calc_progress(check_list.get_check_items())
                 row += 1
