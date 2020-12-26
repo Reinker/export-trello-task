@@ -293,4 +293,7 @@ class ExportExcel:
         self.performance(self.__ws.max_column)
         self.filled_task()
 
-        self.__wb.save('test.xlsx')
+        today = date.today()
+        file_name = date.strftime(today, '%Y-%m-%d')
+        print('xlsxs/' + file_name + '.xlsx')
+        self.__wb.save('xlsxs/' + file_name + '.xlsx')
