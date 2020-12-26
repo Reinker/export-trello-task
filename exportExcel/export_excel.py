@@ -11,6 +11,7 @@ import calendar
 import json
 import csv
 import os
+import re
 
 ROW_START=1
 DATA_ROW_START=3
@@ -38,6 +39,8 @@ class ExportExcel:
             return
 
         for f in files:
+            if re.match('.*\.json', f) == None:
+                continue
             print('load file : ' + f)
             file_open = open('./jsons/' + f, 'r')
             json_str = json.load(file_open)
