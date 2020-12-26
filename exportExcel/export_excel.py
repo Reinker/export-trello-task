@@ -271,6 +271,7 @@ class ExportExcel:
         self.task_due_date()
         self.task_actual_due_date()
         self.task_last_activity_date()
+        self.__ws.freeze_panes = get_column_letter(self.__col_offset) + str(ROW_START)
         self.performance(self.__ws.max_column)
 
         self.__wb.save('test.xlsx')
