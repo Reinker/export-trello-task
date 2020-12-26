@@ -174,7 +174,7 @@ class ExportExcel:
 
     def task_start_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(10, '開始日')
+        self.__set_item_name_cell(15, '開始日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -187,7 +187,7 @@ class ExportExcel:
 
     def task_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(10, '終了予定日')
+        self.__set_item_name_cell(15, '終了予定日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -200,7 +200,7 @@ class ExportExcel:
 
     def task_last_activity_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(10, '最終更新日')
+        self.__set_item_name_cell(15, '最終更新日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -213,7 +213,7 @@ class ExportExcel:
 
     def task_actual_due_date(self):
         col_num = self.__col_offset
-        self.__set_item_name_cell(10, '終了日')
+        self.__set_item_name_cell(15, '終了日')
         row = DATA_ROW_START
         for board in self.__boards:
             self.__ws.cell(row=row, column=col_num).fill = PHASE_FILL
@@ -298,5 +298,5 @@ class ExportExcel:
 
         today = date.today()
         file_name = date.strftime(today, '%Y-%m-%d')
-        print('xlsxs/' + file_name + '.xlsx')
+        print('file exported to : xlsxs/' + file_name + '.xlsx')
         self.__wb.save('xlsxs/' + file_name + '.xlsx')
