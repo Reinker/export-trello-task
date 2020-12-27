@@ -39,7 +39,7 @@ class ExportExcel:
             return
 
         for f in files:
-            if re.match('.*\.json', f) == None:
+            if re.match(r'.*\.json', f) == None:
                 continue
             print('load file : ' + f)
             file_open = open('./jsons/' + f, 'r')
