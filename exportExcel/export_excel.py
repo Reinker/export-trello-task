@@ -36,7 +36,12 @@ class ExportExcel:
         self.__import_from_files()
 
     def __import_from_files(self):
-        files = os.listdir('./jsons')
+        files = []
+        try:
+            files = os.listdir('./jsons')
+        except FileNotFoundError:
+            print('Create directory "jsons" and put json files')
+
         if files.count == 0 :
             return
 
@@ -338,4 +343,9 @@ class ExportExcel:
         today = date.today()
         file_name = date.strftime(today, '%Y-%m-%d')
         print('file exported to : xlsxs/' + file_name + '.xlsx')
-        self.__wb.save('xlsxs/' + file_name + '.xlsx')
+        try:
+            self.__wb.save('xlsxs/' + file_name + '.xlsx')
+        except FileNotFoundError:
+            os.mkdir('xlsxs')
+            self.__wb.save('xlsxs/' + file_name + '.xlsx')
+
