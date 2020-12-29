@@ -13,8 +13,10 @@ import csv
 import os
 import re
 
-ROW_START=1
-DATA_ROW_START=3
+HEADER_ROW_START=1
+HEADER_COL_START=1
+ROW_START=5
+DATA_ROW_START=7
 NORMAL_SIDE = Side(style='thin', color='000000')
 BORDER = Border(top=NORMAL_SIDE,bottom=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
 CONVEX_BORDER = Border(top=NORMAL_SIDE,right=NORMAL_SIDE,left=NORMAL_SIDE)
@@ -282,6 +284,32 @@ class ExportExcel:
                     self.__fill_all_column('FF3333', row)
                 row += 1
 
+    def header(self):
+        self.__ws.cell(HEADER_ROW_START, HEADER_COL_START).value = 'チームID'
+        self.__ws.cell(HEADER_ROW_START, HEADER_COL_START).border = BORDER
+        self.__ws.cell(HEADER_ROW_START, HEADER_COL_START).fill = PHASE_FILL
+
+        self.__ws.cell(HEADER_ROW_START, HEADER_COL_START + 1).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).value = 'チームメンバー'
+        self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).fill = PHASE_FILL
+
+        self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START + 1).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).value = '作成者'
+        self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).fill = PHASE_FILL
+
+        self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START + 1).border = BORDER
+
+        self.__ws.cell(HEADER_ROW_START, self.__col_offset - 1).value = '実績'
+        self.__ws.cell(HEADER_ROW_START, self.__col_offset - 1).border = BORDER
+        self.__ws.cell(HEADER_ROW_START, self.__col_offset).value = '○'
+        self.__ws.cell(HEADER_ROW_START, self.__col_offset).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 1, self.__col_offset - 1).value = '計画'
+        self.__ws.cell(HEADER_ROW_START + 1, self.__col_offset - 1).border = BORDER
+        self.__ws.cell(HEADER_ROW_START + 1, self.__col_offset).fill = DATE_FILL
+        self.__ws.cell(HEADER_ROW_START + 1, self.__col_offset).border = BORDER 
+
 
     def __fill_all_column(self, fill_color, row):
         for col in range(1, self.__ws.max_column + 1):
@@ -305,6 +333,7 @@ class ExportExcel:
         self.__ws.freeze_panes = get_column_letter(self.__col_offset) + str(ROW_START)
         self.performance(self.__ws.max_column)
         self.filled_task()
+        self.header()
 
         today = date.today()
         file_name = date.strftime(today, '%Y-%m-%d')
