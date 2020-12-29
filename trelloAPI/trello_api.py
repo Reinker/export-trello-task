@@ -77,6 +77,7 @@ class TrelloAPI:
         members = {}
         for v in self.__json_content['members']:
             members[v['id']] = v['fullName']
+        self.__board.set_members(members)
 
         cards = []
         for card_json in self.__json_content['cards']:
@@ -101,7 +102,7 @@ class TrelloAPI:
 
             membernames = []
             for member_json in card_json['idMembers']:
-                membernames.append(members[member_json])
+                membernames.append(self.__board.get_members()[member_json])
             card.set_membernames(membernames)
             cards.append(card)
 
@@ -115,12 +116,15 @@ class TrelloAPI:
             trello_check_list.set_id_card(check_list['idCard'])
             trello_check_list.set_check_items(check_list['checkItems'])
             self.__check_lists.append(trello_check_list)
-
+    
     def cards(self):
         return self.__board.get_cards()
 
     def board(self):
         return self.__board
+
+    def members(self):
+        return self.__board.get_members()
 
     def sort_cards_by_date(self):
         cards = self.__board.get_cards()

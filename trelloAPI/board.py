@@ -2,6 +2,7 @@ class Board:
     __name = ''
     __board_id = ''
     __description = ''
+    __members = {}
     __cards = []
 
     def get_name(self):
@@ -16,6 +17,9 @@ class Board:
     def get_description(self):
         return self.__description
 
+    def get_members(self):
+        return self.__members
+
     def set_name(self, name):
         self.__name = name
 
@@ -27,3 +31,6 @@ class Board:
 
     def set_desription(self, description):
         self.__description = description
+
+    def set_members(self, members):
+        self.__members = members
