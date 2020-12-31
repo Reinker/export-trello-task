@@ -66,6 +66,8 @@ class TrelloAPI:
         self.__board.set_name(self.__json_content['name'])
         self.__board.set_board_id(self.__json_content['id'])
         self.__board.set_desription(self.__json_content['desc'])
+        self.__board.set_id_organization(self.__json_content['idOrganization'])
+        self.__board.ser_id_member_creator(self.__json_content['idMemberCreator'])
         self.__map_to_check_lists()
         self.__map_to_cards()
 

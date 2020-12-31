@@ -295,19 +295,21 @@ class ExportExcel:
         self.__ws.cell(HEADER_ROW_START, HEADER_COL_START).fill = PHASE_FILL
 
         self.__ws.cell(HEADER_ROW_START, HEADER_COL_START + 1).border = BORDER
+
         self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).value = 'チームメンバー'
         self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).border = BORDER
         self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START).fill = PHASE_FILL
-
-        if len(self.__boards) > 0:
-            members = ', '.join(str(member) for member in self.__boards[0].get_members().values())
-
-        self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START + 1).value = members
 
         self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START + 1).border = BORDER
         self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).value = '作成者'
         self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).border = BORDER
         self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START).fill = PHASE_FILL
+
+        if len(self.__boards) > 0:
+            self.__ws.cell(HEADER_COL_START, HEADER_COL_START + 1).value = self.__boards[0].get_id_organization()
+            members = ', '.join(str(member) for member in self.__boards[0].get_members().values())
+            self.__ws.cell(HEADER_ROW_START + 1, HEADER_COL_START + 1).value = members
+            self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START + 1).value = self.__boards[0].get_members()[self.__boards[0].get_id_member_creator()]
 
         self.__ws.cell(HEADER_ROW_START + 2, HEADER_COL_START + 1).border = BORDER
 
