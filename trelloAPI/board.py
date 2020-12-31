@@ -3,6 +3,8 @@ class Board:
     __board_id = ''
     __description = ''
     __members = {}
+    __id_organization = ''
+    __id_member_creator = ''
     __cards = []
 
     def get_name(self):
@@ -16,6 +18,12 @@ class Board:
 
     def get_description(self):
         return self.__description
+
+    def get_id_organization(self):
+        return self.__id_organization
+
+    def get_id_member_creator(self):
+        return self.__id_member_creator
 
     def get_members(self):
         return self.__members
@@ -34,3 +42,9 @@ class Board:
 
     def set_members(self, members):
         self.__members = members
+
+    def set_id_organization(self, id_organization):
+        self.__id_organization = id_organization
+    
+    def ser_id_member_creator(self, id_member_creator):
+        self.__id_member_creator = id_member_creator
