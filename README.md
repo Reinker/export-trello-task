@@ -8,14 +8,14 @@ excelファイルはxlsxsディレクトリに自動で追加される。日付�
 ## プロジェクト構成
 .
 ├── exportExcel
-│\   └── export_excel.py
+│　　└── export_excel.py
 ├── main.py
 └── trelloAPI
-\    ├── actions.py
-\    ├── board.py
-\    ├── card.py
-\    ├── check_lists.py
-\    └── trello_api.py
+　　　├── actions.py
+　　　├── board.py
+　　　├── card.py
+　　　├── check_lists.py
+　　　└── trello_api.py
 ### main.py
 メインメソッド
 ### exportExcel (export_excel.py)
