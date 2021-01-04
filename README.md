@@ -6,17 +6,16 @@
 4. main.pyを実行  
 excelファイルはxlsxsディレクトリに自動で追加される。日付をファイル名にするため、その日にエクスポートされるファイルはその都度上書きされる。  
 ## プロジェクト構成
-main.py  
-|   
-| - exportExcel  
-|  ¥| - export_excel.py  
-|  
-| - trelloAPI  
-    ¥| - actions.py  
-    ¥| - board.py  
-    ¥| - card.py  
-    ¥| - check_lists.py  
-    ¥| - trello_api.py  
+.
+├── exportExcel
+│   └── export_excel.py
+├── main.py
+└── trelloAPI
+    ├── actions.py
+    ├── board.py
+    ├── card.py
+    ├── check_lists.py
+    └── trello_api.py
 ### main.py
 メインメソッド
 ### exportExcel (export_excel.py)
