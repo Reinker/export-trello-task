@@ -2,7 +2,9 @@ from trelloAPI import card as trello_card
 from trelloAPI import board as trello_board
 from trelloAPI import check_lists as trello_check_lists
 from datetime import datetime
+from datetime import date
 from datetime import timezone
+import calendar
 
 INVALID_DATE_TIME = datetime.strptime('9999-12-31T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%f%z')
 
@@ -42,9 +44,7 @@ def is_task_actual_date_in_date(card, date):
     return start_date <= date and end_date >= date
 
 def str_to_trello_format_datetime(date_str):
-    if date_str == None:
-        return INVALID_DATE_TIME
-
+    if date_str == None: return INVALID_DATE_TIME 
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
 def calc_progress(check_list):
@@ -55,6 +55,32 @@ def calc_progress(check_list):
 
 def datetime_to_date(date_time):
     return datetime.date(date_time)
+
+def next_week(date):
+    current_month = calendar.Calendar().monthdatescalendar(date.year, date.month)
+    day_index = -1
+    week_index = 0
+    for dates in current_month:
+        try:
+            day_index = dates.index(datetime(date.year, date.month, date.day).date())
+            week_index += 1
+        except ValueError:
+            week_index += 1
+            continue
+        else:
+            break
+
+    next_week_day = INVALID_DATE_TIME.date()
+    try:
+        next_week_day = current_month[week_index][day_index]
+    except IndexError:
+        try:
+            current_month = calendar.Calendar().monthdatescalendar(date.year, date.month + 1)
+        except ValueError:
+            current_month = calendar.Calendar().monthdatescalendar(date.year + 1, calendar.January)
+        next_week_day = current_month[0][day_index]
+
+    return datetime(next_week_day.year, next_week_day.month, next_week_day.day, 0, 0, 0, 0, timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
 
 class TrelloAPI:
     def __init__(self, json_content):
@@ -90,9 +116,6 @@ class TrelloAPI:
             card.set_listname(listname[card_json['idList']])
             card.set_closed(card_json['closed'])
             card.set_date_last_activity(card_json['dateLastActivity'])
-            card.set_due(card_json['due'])
-            card.set_due_complete(card_json['dueComplete'])
-            card.set_check_list(list(filter(lambda x: x.get_id_card() == card.get_card_id(), self.__check_lists)))
 
             for action in self.__json_content['actions']:
                 try:
@@ -101,6 +124,14 @@ class TrelloAPI:
                     continue
                 if card_id == card_json['id'] :
                     card.set_date(action['date'])
+
+
+            if card_json['due'] != None:
+                card.set_due(card_json['due'])
+            else:
+                card.set_due(next_week(card.get_date()))
+            card.set_due_complete(card_json['dueComplete'])
+            card.set_check_list(list(filter(lambda x: x.get_id_card() == card.get_card_id(), self.__check_lists)))
 
             membernames = []
             for member_json in card_json['idMembers']:
