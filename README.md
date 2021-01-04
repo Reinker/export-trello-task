@@ -1,7 +1,7 @@
 # export-trello-task
 ## インストールするオープンソース
-+ numpy
-+ openyxl
++ numpy  
++ openyxl  
 あとは必要に応じて各自の環境で追加。setup.shでは開発環境で便利なオープンソースも勝手に追加される。
 ## 使い方
 1. pip installを実行  
