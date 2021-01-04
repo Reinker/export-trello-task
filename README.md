@@ -1,10 +1,21 @@
 # export-trello-task
-## インストールするオープンソース
-+ numpy  
-+ openyxl  
-あとは必要に応じて各自の環境で追加。setup.shでは開発環境で便利なオープンソースも勝手に追加される。
+## インストールするオープンソースライブラリ
+### 必須
++ numpy
++ openyxl
+### 推奨
++ virtualenv
+
+virtualenvによる開発環境の設定は以下の手順で行う。
+```
+~$ virtualenv -p python3.7 venv #venvはディレクトリ名なので任意で変更可能
+~$ source venv/bin/activate #Linux/MacOSはsourceで、Windowsの場合はsouceを付けずにバッチファイルを実行
+~$ #以下pip installでvirtualenvに必要なライブラリを追加
+```
+
+あとは必要に応じて各自の環境で追加。setup.shでは開発環境で便利なオープンソースライブラリも勝手に追加される。
 ## 使い方
-1. pip installを実行  
+1. pip installを実行し、必要なライブラリを追加  
 2. jsonsディレクトリを作成  
 3. jsonsディレクトリにtrelloボードでエクスポートしたjsonファイルを追加していく  
 4. main.pyを実行  
