@@ -6,7 +6,8 @@ from datetime import date
 from datetime import timezone
 import calendar
 
-INVALID_DATE_TIME = datetime.strptime('9999-12-31T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%f%z')
+TRELLO_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f%z'
+INVALID_DATE_TIME = datetime.strptime('9999-12-31T00:00:00.000Z', TRELLO_DATETIME_FORMAT)
 
 #プロジェクトのタスク開始日を取得する
 def get_project_start_date(all_board_and_card):
@@ -45,7 +46,7 @@ def is_task_actual_date_in_date(card, date):
 
 def str_to_trello_format_datetime(date_str):
     if date_str == None: return INVALID_DATE_TIME 
-    return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
+    return datetime.strptime(date_str, TRELLO_DATETIME_FORMAT)
 
 def calc_progress(check_list):
     if len(check_list) < 1:
@@ -80,7 +81,7 @@ def next_week(date):
             current_month = calendar.Calendar().monthdatescalendar(date.year + 1, calendar.January)
         next_week_day = current_month[0][day_index]
 
-    return datetime(next_week_day.year, next_week_day.month, next_week_day.day, 0, 0, 0, 0, timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+    return datetime(next_week_day.year, next_week_day.month, next_week_day.day, 0, 0, 0, 0, timezone.utc).strftime(TRELLO_DATETIME_FORMAT)
 
 class TrelloAPI:
     def __init__(self, json_content):
