@@ -60,7 +60,7 @@ class ExportExcel:
             if re.match(r'.*\.json', f) == None:
                 continue
             print('load file : ' + f)
-            file_open = open(self.__jsons_path + f, 'r')
+            file_open = open(self.__jsons_path + f, 'r', encoding="utf-8_sig")
             json_str = json.load(file_open)
             api = trello_api.TrelloAPI(json_str)
             api.map_to_board()
