@@ -25,6 +25,9 @@ TOP_FILL = PatternFill(fill_type='solid', fgColor='55FF55')
 PHASE_FILL = PatternFill(fill_type='solid', fgColor='FFFF55')
 DATE_FILL = PatternFill(fill_type='solid', fgColor='6666FF')
 
+MAC_FILE_PATH={"jsons": "./jsons/", "xlsxs": "./xlsxs/"}
+WINDOWS_FILE_PATH={"jsons": "jsons\\", "xlsxs": "xlsxs\\"}
+
 class ExportExcel:
 
     def __init__(self):
@@ -33,12 +36,20 @@ class ExportExcel:
         self.__ws = self.__wb.active
         self.__ws.title = 'タスク一覧'
         self.__col_offset = 1
+        self.__jsons_path = ''
+        self.__xlsxs_path = ''
+        if os.name == 'nt':
+            self.__jsons_path = WINDOWS_FILE_PATH["jsons"]
+            self.__xlsxs_path = WINDOWS_FILE_PATH["xlsxs"]
+        elif os.name == 'posix':
+            self.__jsons_path = MAC_FILE_PATH["jsons"]
+            self.__xlsxs_path = MAC_FILE_PATH["xlsxs"]
         self.__import_from_files()
 
     def __import_from_files(self):
         files = []
         try:
-            files = os.listdir('./jsons')
+            files = os.listdir(self.__jsons_path)
         except FileNotFoundError:
             print('Create directory "jsons" and put json files')
 
@@ -49,7 +60,7 @@ class ExportExcel:
             if re.match(r'.*\.json', f) == None:
                 continue
             print('load file : ' + f)
-            file_open = open('./jsons/' + f, 'r')
+            file_open = open(self.__jsons_path + f, 'r')
             json_str = json.load(file_open)
             api = trello_api.TrelloAPI(json_str)
             api.map_to_board()
@@ -351,8 +362,8 @@ class ExportExcel:
         file_name = date.strftime(today, '%Y-%m-%d')
         print('file exported to : xlsxs/' + file_name + '.xlsx')
         try:
-            self.__wb.save('xlsxs/' + file_name + '.xlsx')
+            self.__wb.save(self.__xlsxs_path + file_name + '.xlsx')
         except FileNotFoundError:
-            os.mkdir('xlsxs')
-            self.__wb.save('xlsxs/' + file_name + '.xlsx')
+            os.mkdir(self.__xlsxs_path)
+            self.__wb.save(self.__xlsxs_path + file_name + '.xlsx')
 
