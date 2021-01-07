@@ -1,7 +1,3 @@
-*.json
-*.csv
-jsons/
 trelloAPI/__pycache__
 exportExcel/__pycache__/
-xlsxs/
 
